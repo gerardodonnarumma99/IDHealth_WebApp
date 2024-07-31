@@ -1,7 +1,7 @@
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Box, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
-import { MESSAGE_ERROR_COMMUNICATION_POD, MESSAGE_ERROR_RETRIVE_MEASURE, NS_PIM_SPACE_STORAGE } from "../utils/constants";
-import { getSolidDataset, getThing, getStringNoLocale, getUrlAll, getUrl, getFile, getContainedResourceUrlAll, hasAccessibleAcl } from "@inrupt/solid-client";
+import { MESSAGE_ERROR_RETRIVE_MEASURE, NS_PIM_SPACE_STORAGE } from "../utils/constants";
+import { getSolidDataset, getThing, getUrlAll, getContainedResourceUrlAll } from "@inrupt/solid-client";
 import { useSession } from "@inrupt/solid-ui-react";
 import { measuramentQl } from "../utils/solidDataUtils";
 import { useRecoilState } from "recoil";
@@ -43,7 +43,6 @@ const DashboardDoctor = () => {
     const fetchPodPatient = async (webId) => {
         try {
             const datasetHealth = await getSolidDataset(webId, session.fetch);
-            ('datasetHealth', datasetHealth)
 
             const thing = getThing(datasetHealth, webId);
 
@@ -51,7 +50,7 @@ const DashboardDoctor = () => {
 
             setPodsPatient(pods);
         } catch(error) {
-            ('Error', error)
+            console.log('Error', error)
         }
     }
 
@@ -60,16 +59,13 @@ const DashboardDoctor = () => {
             setIsLoading(true);
     
             const measuramentsContainerUrl = `${storageUrl}measuraments/`;
-            ('URL MEASURAMENTS', measuramentsContainerUrl)
     
             const dataset = await getSolidDataset(measuramentsContainerUrl, { fetch: session.fetch })
             const measuramentUrls = getContainedResourceUrlAll(dataset)
-            ('resourceUrls', measuramentUrls)
     
             const listMeasuraments = new Array();
     
             for(const measuramentUrl of measuramentUrls) {
-              ('measuramentUrl', measuramentUrl)
               const datasetMeasuament = await getSolidDataset(measuramentUrl, { fetch: session.fetch })
               const measuramentDayUrls = getContainedResourceUrlAll(datasetMeasuament)
     
@@ -79,16 +75,13 @@ const DashboardDoctor = () => {
               
                 // Estrai il nome del file utilizzando substring
                 const fileName = url.substring(lastIndex + 1).replace(".ttl", "");
-                ('fileName', fileName)
     
                 const response = await sparqlExecutor.executeQuery(url, measuramentQl(fileName), session.fetch);
-                ('PAGE MEASURAMENTS', response)
                 listMeasuraments.push(response)
               }
             }
     
             setMeasuraments(listMeasuraments);
-            ('LISTA', listMeasuraments)
     
         } catch (error) {
             setMeasuraments([])
@@ -96,7 +89,7 @@ const DashboardDoctor = () => {
               isError: true,
               message: MESSAGE_ERROR_RETRIVE_MEASURE
             })
-            ('Errore', error)
+            console.log('Error', error)
         } finally {
             setIsLoading(false);
         }

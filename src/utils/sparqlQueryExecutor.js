@@ -13,7 +13,6 @@ class SparqlQueryExecutor {
             sources: [`${url}`],
             fetch: fetch,
         });
-        ('bindingsStream', bindingsStream, url)
   
         const bindings = await bindingsStream.toArray();
 
@@ -23,8 +22,6 @@ class SparqlQueryExecutor {
             result[variable.value] = term.value
           });
         });
-
-        ('result', result)
   
         return result;
       } catch (error) {

@@ -8,9 +8,6 @@ const workercode = () => {
 
     const { modelJson, measuraments } = data;
 
-    ('worker model', modelJson)
-    ('worker data', data)
-
     // Converti i valori glicemici in numeri
     const glucoseValues = measuraments.map((m) => parseFloat(m.value));
     // Converti le date in timestamp
@@ -22,14 +19,12 @@ const workercode = () => {
     const ys = tf.tensor2d(glucoseValues, [glucoseValues.length, 1]); // eslint-disable-line
 
     const model = await tf.models.modelFromJSON(JSON.parse(modelJson)); // eslint-disable-line
-    ('MAMMT', model)
     await model.compile({ optimizer: "adam", loss: 'meanSquaredError' });
     self.postMessage({ action: "progress", progress: 50 }); // eslint-disable-line no-restricted-globals
     await model.fit(xs, ys, { epochs: 10 });
     self.postMessage({ action: "progress", progress: 75 }); // eslint-disable-line no-restricted-globals
 
     const weights = model.getWeights().map(w => ({ data: w.arraySync(), shape: w.shape }));
-    ('pesi', weights)
     self.postMessage({ action: "data", weights }); // eslint-disable-line no-restricted-globals
   };
 };

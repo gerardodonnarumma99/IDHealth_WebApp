@@ -1,6 +1,6 @@
 import { Button, Grid } from "@mui/material"
 import PermissionDataTable from "../components/permission/PermissionDataTable"
-import { getSolidDataset, getAgentAccessAll, getSolidDatasetWithAcl, createAcl,  setAgentResourceAccess, universalAccess} from "@inrupt/solid-client";
+import { universalAccess} from "@inrupt/solid-client";
 import { useSession } from "@inrupt/solid-ui-react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { profileState } from "../atom/profileState";
@@ -35,7 +35,6 @@ const PermissionPage = () => {
 
             getPermissionsForResource();
         } catch(error) {
-            ('Errore', error)
             setError({
                 isError: true,
                 message: MESSAGE_ERROR_COMMUNICATION_POD
@@ -70,7 +69,6 @@ const PermissionPage = () => {
 
             setData(permissions)
         } catch(error) {
-            ('Errore', error)
             setError({
                 isError: true,
                 message: MESSAGE_ERROR_COMMUNICATION_POD
@@ -107,7 +105,6 @@ const PermissionPage = () => {
             await getPermissionsForResource();
 
         } catch(error) {
-            ('Errore', error)
             setError({
                 isError: true,
                 message: MESSAGE_ERROR_COMMUNICATION_POD

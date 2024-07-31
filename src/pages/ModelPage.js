@@ -45,10 +45,8 @@ const ModelPage = () => {
   }, [])
 
   useEffect(() => {
-    ('NUOVO MESSAGE', new Date().toTimeString(), lastMessage)
     if (lastMessage !== null) {
       const messageData = lastMessage.data;
-      ('Received message:', messageData);
 
       loadModel(messageData);
     }
@@ -59,16 +57,13 @@ const ModelPage = () => {
         setIsLoading(true);
 
         const measuramentsContainerUrl = `${storageUrl}measuraments/`;
-        ('URL MEASURAMENTS', measuramentsContainerUrl)
 
         const dataset = await getSolidDataset(measuramentsContainerUrl, { fetch: session.fetch })
         const measuramentUrls = getContainedResourceUrlAll(dataset)
-        ('resourceUrls', measuramentUrls)
 
         const listMeasuraments = new Array();
 
         for(const measuramentUrl of measuramentUrls) {
-          ('measuramentUrl', measuramentUrl)
           const datasetMeasuament = await getSolidDataset(measuramentUrl, { fetch: session.fetch })
           const measuramentDayUrls = getContainedResourceUrlAll(datasetMeasuament)
 
@@ -78,17 +73,14 @@ const ModelPage = () => {
           
             // Estrai il nome del file utilizzando substring
             const fileName = url.substring(lastIndex + 1).replace(".ttl", "");
-            ('fileName', fileName)
 
             const response = await sparqlExecutor.executeQuery(url, measuramentQl(fileName), session.fetch);
-            ('PAGE MEASURAMENTS', response)
             listMeasuraments.push(response)
           }
         }
 
         setMeasuraments(listMeasuraments);
         setMeasurementsDateAndValueForGraph(listMeasuraments);
-        ('LISTA', listMeasuraments)
 
     } catch (error) {
         setMeasuraments([])
@@ -105,10 +97,8 @@ const ModelPage = () => {
   const loadModel = async (messageData) => {
     try {
       const modelJson = JSON.parse(messageData); // Cerca di analizzare il JSON
-      ('MODELLO JSON PARSATO', modelJson)
       const model = await tf.models.modelFromJSON(modelJson); // Carica il modello
       setModel(model);
-      ('modello arrivato')
     } catch (error) {
       console.error("Error parsing message data:", error); // Gestione degli errori
       setError({
@@ -127,8 +117,6 @@ const ModelPage = () => {
 
       // Converti le date in timestamp
       const timestamps = measuraments.map((m) => new Date(m.dateTime).getTime());
-      ('glucoseValues', glucoseValues);
-      ('timestamps', timestamps);
 
       // Crea i tensor per addestrare il modello
       const xs = tf.tensor2d(timestamps, [timestamps.length, 1]); // Tutti i timestamp
@@ -138,7 +126,6 @@ const ModelPage = () => {
       await model.fit(xs, ys, { epochs: 10 });
 
       const weights = model.getWeights().map(w => ({ data: w.arraySync(), shape: w.shape }));
-      ('pesi', weights)
       
       // Salva nel Solid POD dell'utente
       const timestamp = new Date().toISOString();
@@ -160,7 +147,6 @@ const ModelPage = () => {
     // Ottieni il valore previsto
     const valorePrevisto = previsione.dataSync()[0]; // Ricorda che i risultati sono tensor, quindi usa .dataSync() per estrarre il dato
 
-    ("Valore glicemico previsto:", valorePrevisto);
     setPredict(parseFloat(valorePrevisto.toFixed(2)));
   }
 
@@ -190,9 +176,6 @@ const ModelPage = () => {
     
     const measurementsValue = listMeasuraments.map((measure) => parseFloat(measure.value))
 
-    ('measurementsDateTime', measurementsDateTime)
-    ('measurementsValue', measurementsValue)
-
     setMeasurementsForGraph({
       dateTimes: measurementsDateTime,
       values: measurementsValue
@@ -209,8 +192,6 @@ const ModelPage = () => {
 
         const webIdsAcl = Object.keys(agentsAccess);
 
-        ('PERMESSI DEL FEDERATED SERVER', webIdsAcl)
-
         setIsPermissionFS()
         for(const webId of webIdsAcl) {
           if(webId === process.env.REACT_APP_WEB_ID_FEDERATED_SERVER) {
@@ -218,7 +199,6 @@ const ModelPage = () => {
           }
         }
     } catch(error) {
-        ('Errore', error)
         setError({
             isError: true,
             message: MESSAGE_ERROR_COMMUNICATION_POD
@@ -241,7 +221,6 @@ const ModelPage = () => {
 
       setIsPermissionFS(false);
     } catch(error) {
-        ('Errore', error)
         setError({
             isError: true,
             message: MESSAGE_ERROR_COMMUNICATION_POD
@@ -265,7 +244,6 @@ const ModelPage = () => {
         setIsPermissionFS(true)
 
     } catch(error) {
-        ('Errore', error)
         setError({
             isError: true,
             message: MESSAGE_ERROR_COMMUNICATION_POD

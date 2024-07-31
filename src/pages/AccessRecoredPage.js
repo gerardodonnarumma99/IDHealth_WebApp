@@ -25,7 +25,6 @@ const AccessRecoredPage = () => {
             if(data.returnValues.podUrl === profile.storageUrl) {
                 fetchAccess(profile.storageUrl);
             }
-            ('OK EVENTO', data.returnValues)
         })
     }
 
@@ -34,13 +33,12 @@ const AccessRecoredPage = () => {
 
         const response = await getAccesses(storageUrl);
         const accessMapped = response.map(item => {
-            ('itemmmmmmmmm', item)
             // Crea un oggetto Date utilizzando il timestamp
-            //const date = new Date(Number(item.timestamp) * 1000); // eslint-disable-line
+            const date = new Date(Number(item.timestamp) * 1000); // eslint-disable-line
 
             // Formatta la data
-            //const formattedDate = date.toLocaleString();
-            return { server: item.server, timestamp: '2024-05-30 21:05:46'}
+            const formattedDate = date.toLocaleString();
+            return { server: item.server, timestamp: formattedDate}
         })
         setAccess(accessMapped);
     }

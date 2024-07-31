@@ -7,8 +7,6 @@ import { useSession } from "@inrupt/solid-ui-react";
 import { getPatientInfo, saveFile } from "../utils/solidDataUtils";
 import { getPatientTurtle } from "../utils/turtleInfo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { FormProvider, useForm } from "react-hook-form-mui";
-import { useEffect, useState } from "react";
 import { patientState } from "../atom/patientState";
 import { loaderState } from "../atom/loaderState";
 import errorState from "../atom/errorState";
@@ -23,7 +21,6 @@ const ProfilePage = () => {
     const theme = useTheme();
 
     const onSubmitProfileForm = async (data) => {
-        ('DATI PROFILO', data)
         const formattedBirthDate = dayjs(data.date, { locale: AdapterDayjs.locale }).format('YYYY-MM-DD');
 
         const newPatientInfo = {
@@ -48,7 +45,6 @@ const ProfilePage = () => {
             const patient = await getPatientInfo(profileInfo.storageUrl, session.info.webId, session.fetch);
             setPatientInfo({ ...patient })
         } catch(error) {
-            ("Errore", error)
             setError({
                 isError: true,
                 message: MESSAGE_ERROR_COMMUNICATION_POD

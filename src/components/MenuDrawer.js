@@ -102,7 +102,6 @@ export default function Dashboard({ children }) {
   }
 
   const getMenuListItems = () => {
-    ('profile?.role', profile.role)
     if(!isLoggedIn()) {
       return menuPublicList.map(({ label, path, icon }) => (
         <ListItemButton onClick={() => handleNavigatePath(path)}>

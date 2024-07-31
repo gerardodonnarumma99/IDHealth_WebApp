@@ -11,7 +11,6 @@ const ProfileForm = ({ defaultValues, onSubmit }) => {
     const { handleSubmit, control, reset, formState: { errors } } = useForm({ defaultValues });
 
     useEffect(() => {
-        ('DEFAULT VALUE', defaultValues);
         reset(defaultValues); // Resetta i valori predefiniti quando cambiano
     }, [defaultValues, reset]);
 

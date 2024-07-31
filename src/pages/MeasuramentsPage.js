@@ -32,11 +32,9 @@ const MeasuramentsPage = () => {
             setIsLoading(true);
 
             const measuramentUrl = `${profile.storageUrl}measuraments/${dayjs(dateValue).format("YYYY-MM-DD")}`;
-            ('URL MEASURAMENTS', measuramentUrl)
 
             const dataset = await getSolidDataset(measuramentUrl, { fetch: session.fetch })
             const resourceUrls = getContainedResourceUrlAll(dataset)
-            ('resourceUrls', resourceUrls)
 
             const results = [];
             for (const url of resourceUrls) {
@@ -45,10 +43,8 @@ const MeasuramentsPage = () => {
             
                 // Estrai il nome del file utilizzando substring
                 const fileName = url.substring(lastIndex + 1).replace(".ttl", "");
-                ('fileName', fileName)
 
                 const response = await sparqlExecutor.executeQuery(url, measuramentQl(fileName), session.fetch);
-                ('PAGE MEASURAMENTS', response)
                 results.push({
                     ...response,
                     fileUrl: `${measuramentUrl}/${fileName}.ttl`

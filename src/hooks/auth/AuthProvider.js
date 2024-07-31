@@ -12,7 +12,6 @@ const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useRecoilState(loaderState);
 
   useEffect(() => {
-    ('session', session)
     loadHandleIncomingRedirect();
     if(!session || (session && !session.isLoggedIn)) navigate('/login');
   }, []);
@@ -30,7 +29,7 @@ const AuthProvider = ({ children }) => {
         navigate("/");
       }
     } catch(error) {
-      ('Errore', error)
+      console.log('Errore', error)
     }
   }
   

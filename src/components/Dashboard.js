@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { LogoutButton, useSession } from "@inrupt/solid-ui-react";
-import { getSolidDataset, getThing, getStringNoLocale, getUrlAll, getUrl, getFile, getContainedResourceUrlAll, hasAccessibleAcl, getNamedNode } from "@inrupt/solid-client";
-import { QueryEngine } from "@comunica/query-sparql-solid";
-import { DOCTOR_ROLE, FOAF_PREDICATE, MESSAGE_ERROR_UNAUTHORIZED, NS_PIM_SPACE_STORAGE, PATIENT_ROLE, VCARD_PREDICATE } from "../utils/constants";
+import { useSession } from "@inrupt/solid-ui-react";
+import { getSolidDataset, getThing, getStringNoLocale, getUrlAll, getFile, getContainedResourceUrlAll } from "@inrupt/solid-client";
+import { DOCTOR_ROLE, MESSAGE_ERROR_UNAUTHORIZED, NS_PIM_SPACE_STORAGE, PATIENT_ROLE, VCARD_PREDICATE } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { Button, Grid, Link, Paper, Skeleton, Stack, Typography, useTheme } from "@mui/material";
 import SparqlQueryExecutor from "../utils/sparqlQueryExecutor";
@@ -10,15 +9,13 @@ import { useRecoilState } from "recoil";
 import errorState from "../atom/errorState";
 import { profileState } from "../atom/profileState";
 import { patientState } from "../atom/patientState";
-import { getPatientInfo, measuramentQl, patientQl, profileQl, saveFile } from "../utils/solidDataUtils";
+import { getPatientInfo, profileQl, saveFile } from "../utils/solidDataUtils";
 import MeasuramentModal from "./measurament/MeasuramentModal";
 import dayjs from "dayjs";
 import { getMeasuramentTurtle } from "../utils/turtleInfo";
 import { v4 as uuidv4 } from 'uuid';
 import { loaderState } from "../atom/loaderState";
 import { toast } from "react-toastify";
-import { associatePod, podHasOwner } from "../utils/contractsBlockchainFetch";
-import accountBlockchainState from "../atom/accountBlockchainState";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DashboardDoctor from "./DashboardDoctor";
@@ -56,7 +53,6 @@ const Dashboard = () => {
         setIsLoading(true);
         // Ottieni il dataset Solid associato al WebID
         const dataset = await getSolidDataset(webId, session.fetch);
-        ('dataset', dataset)
     
         // Ottieni la cosa (resource) del profilo
         const profileThing = getThing(dataset, webId);
@@ -68,11 +64,8 @@ const Dashboard = () => {
         const pod = podsUrls[0];
 
         const profileInfo = await sparqlExecutor.executeQuery(`${pod}profile`, profileQl(pod), session.fetch);
-        ('Info Profilo', profileInfo)
 
         const role = await getRole(pod, webId)
-
-        ('RUOLO', role)
 
         if(!role || (role && ![PATIENT_ROLE, DOCTOR_ROLE].includes(role.trim().toLowerCase()))) {
           setError({
@@ -124,7 +117,6 @@ const Dashboard = () => {
       if(!isExisting) return false;
 
       const patient = await getPatientInfo(storageUrl, webId, sessionFetch);
-      ('Dati del paziente recuperati', patient)
       setPatient({ ...patient })
 
       return patient;
@@ -144,7 +136,6 @@ const Dashboard = () => {
       setIsLoading(true);
       let totalCount = 0;
       const measuramentUrl = `${storageUrl}measuraments`;
-      ('URL MEASURAMENTS', measuramentUrl)
 
       const dataset = await getSolidDataset(measuramentUrl, { fetch })
 
@@ -156,10 +147,8 @@ const Dashboard = () => {
         totalCount += containedResourceDayMeasure.length;
       }
 
-      ('COUNT MEASURE', totalCount)
       setTotalMeasure(totalCount);
     } catch(error) {
-      ('Errore', error)
       setError({
         isError: true,
         message: error.message
@@ -186,7 +175,7 @@ const Dashboard = () => {
       await saveFile(`${profile.storageUrl}/measuraments/${currentDateFormatter}/${idMeasurament}.ttl`, measuramentTurtle, session.fetch);
       toast("Measurement entered successfully!", { type: "success" })
     } catch(error) {
-      (error)
+      console.log('Error', error)
     } finally {
       setIsLoading(false);
     }
